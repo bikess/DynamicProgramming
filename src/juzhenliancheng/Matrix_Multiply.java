@@ -62,16 +62,50 @@ public class Matrix_Multiply {
 		a6.l = 25;
 		input[6]=a6;
 		
-//		求得最优解的代价，
+//		求得最优解的代价，采用自底向上的方法
 		matrixChainOrder(input);
 		
-		System.out.println("最优的连乘代价为："+m[1][n]);
+//		求得最优解的代价，采用自顶向下 并且包含备忘录的方式
+		int max = matrixChainOrderMemo(input);
 		
+		System.out.println("最优的连乘代价为："+m[2][5]);
+		
+		System.out.println("最优的连乘代价max为："+max);
 //		求得最优求解顺序，即矩阵连乘的最优乘法顺序。
-		optimalParens(1,n);
+		optimalParens(2,5);
 	}
 
-//		得到从i到j连乘的最优计算顺序
+//	 采取自顶向下的方式解决最优解问题
+	static int matrixChainOrderMemo(Matrix[] input) {
+		// TODO Auto-generated method stub
+		int mf[][]= new int[n+1][n+1];
+		for(int i =0;i<=n;i++){
+			for(int j=i;j<=n;j++){
+				mf[i][j] = Integer.MAX_VALUE;
+			}
+		}
+		return lookUP_Chain(mf,2,5); 
+	}
+
+	static int lookUP_Chain(int[][] mf,int a,int b) {
+		// TODO Auto-generated method stub
+		if(mf[a][b]<Integer.MAX_VALUE)
+			return mf[a][b];
+		if(a==b){
+			mf[a][b] = 0;
+		}
+		else{
+			for(int i=a;i<=b-1;i++){
+				int q = lookUP_Chain(mf,a, i)+lookUP_Chain(mf,i+1, b)+input[a].r*input[i].l*input[b].l;
+				if(q<mf[a][b])
+					mf[a][b]  = q;
+			}
+		}
+		return mf[a][b];
+		
+	}
+
+	//		得到从i到j连乘的最优计算顺序
 	 static void optimalParens(int i ,int j) {
 		// TODO Auto-generated method stub
 		if(i==j){
